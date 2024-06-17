@@ -15,7 +15,7 @@ class VK:
             'extended': 1,
             'photo_sizes': 1,
             'count': count,
-            'v': '5.131'
+            'v': '5.199'
         }
         headers = {'Authorization': 'Bearer ' + self.token}
         response = requests.get('https://api.vk.com/method/photos.get', params=params, headers=headers)
