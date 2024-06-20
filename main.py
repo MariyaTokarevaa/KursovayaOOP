@@ -54,7 +54,7 @@ ya_disk.create_folder(folder_name)
 photos_info = vk.get_photos()
 if 'response' in photos_info:
     photos = photos_info['response']['items']
-    photos.sort(key=lambda x: max(x['sizes'], key=lambda size: size['width'] * size['height'])['width'] * max(x['sizes'], key=lambda size: size['width'] * size['height'])['height'], reverse=True)
+    photos.sort(key=lambda x: (lambda size: size['width'] * size['height'])(max(x['sizes'], key=lambda size: size['width'] * size['height'])), reverse=True)
     photos = photos[:5]  # Ограничиваем количество фотографий до 5
 
     for item in tqdm(photos, desc='Загрузка фотографий'):
