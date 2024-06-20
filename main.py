@@ -2,6 +2,7 @@ import requests
 import os
 import json
 from tqdm import tqdm
+from datetime import datetime
 
 class VK:
     def __init__(self, token_vk, user_id):
@@ -38,6 +39,13 @@ class YandexDisk:
     def save_photos_info(self, folder_name, photos_info):
         with open(f'{folder_name}/photos_info.json', 'w') as file:
             json.dump(photos_info, file, ensure_ascii=False, indent=4)
+            
+    def check_file_exists(self, folder_name, file_name):
+        headers = {'Authorization': 'OAuth ' + self.token}
+        params = {'path': f'{folder_name}/{file_name}'}
+        response = requests.get('https://cloud-api.yandex.net/v1/disk/resources', params=params, headers=headers)
+        return response.status_code == 200
+
 
 # Использование классов
 token_vk = 'ВАШ_ТОКЕН_VK'
@@ -59,7 +67,13 @@ if 'response' in photos_info:
 
     for item in tqdm(photos, desc='Загрузка фотографий'):
         max_size_photo = max(item['sizes'], key=lambda size: size['width'] * size['height'])
-        file_name = str(item['likes']['count']) + '.jpg'
+        likes_count = item['likes']['count']
+        file_name = f"{likes_count}.jpg"
+        # Форматируем дату для добавления к имени файла
+        date = datetime.fromtimestamp(item['date']).strftime('%Y-%m-%d')
+        # Проверяем, существует ли уже файл с таким именем
+        if os.path.exists(f'{folder_name}/{file_name}'):
+            file_name = f"{likes_count}_{date}.jpg"
         ya_disk.upload_photo(folder_name, file_name, max_size_photo['url'])
 
     # Сохраняем информацию о фотографиях в JSON-файл
