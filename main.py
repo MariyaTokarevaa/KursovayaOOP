@@ -50,8 +50,6 @@ else:
     dict['size'] = ''
     data = vk_download()
     for photos in data['response']['items']:
-        for i in tqdm(range(data['response']['count'])):
-            time.sleep(0.5)
         photo_url = photos['sizes'][-1]['url']
         name_photo = photos['likes']['count']
         date_photo = datetime.fromtimestamp(photos['date'])
@@ -81,7 +79,7 @@ else:
         # создать папку на Яндекс диске
         params = {'path': 'Vk_images'}
         headers = {'Authorization': 'OAuth ' + token_ya}
-        response = requests.put('https://cloud-api.yandex.net/v1/disk/resources',
+        response = requests.post('https://cloud-api.yandex.net/v1/disk/resources',
                                 params=params,
                                 headers=headers)
 
